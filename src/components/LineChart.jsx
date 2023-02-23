@@ -15,7 +15,7 @@ const LineChart = ({
   marginRight = 30, // right margin, in pixels
   marginBottom = 30, // bottom margin, in pixels
   marginLeft = 40, // left margin, in pixels
-  width = 640, // outer width, in pixels
+  width = 1040, // outer width, in pixels
   height = 400, // outer height, in pixels
   xType = d3.scaleLinear, // the x-scale type
   xDomain, // [xmin, xmax]
@@ -36,11 +36,10 @@ const LineChart = ({
   const gAxisBottomRef = useRef(null)
   const axisLeftRef = useRef(null)
   const chartRef = useRef(null)
-  const data = useSelector(state => state.data.appl)
+  const appl = useSelector(state => state.data.appl)
+  const data = appl.map(d => ({...d, close: new Date(d.date).getUTCMonth() < 3 ? NaN : d.close})) //симулируем пропуски
 
   useEffect(() => {
-    console.log(111);
-
     //compute values
     const X = d3.map(data, x).map(d => new Date(d).getTime())
     const Y = d3.map(data, y)
@@ -98,7 +97,7 @@ const LineChart = ({
       .attr("stroke-linecap", strokeLinecap)
       .attr("stroke-linejoin", strokeLinejoin)
       .attr("stroke-opacity", strokeOpacity)
-      .attr("d", line(I));
+      .attr("d", line(I.filter(i=>D[i])));
 
   }, [data])
 
