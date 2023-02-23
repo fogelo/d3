@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react"
 import * as d3 from "d3"
 import dayjs from "dayjs"
-import axios from "axios"
+import { useSelector } from "react-redux";
+
 
 
 const LineChart = ({
-  data,
+  // data,
   x = ([x]) => x, // given d in data, returns the (temporal) x-value
   y = ([, y]) => y, // given d in data, returns the (quantitative) y-value
   // defined, // for gaps in data
@@ -34,13 +35,11 @@ const LineChart = ({
   const svgRef = useRef(null)
   const gAxisBottomRef = useRef(null)
   const axisLeftRef = useRef(null)
-
-  const data1 = axios.get("https://gist.githubusercontent.com/fogelo/74896d030000ccef733c109ee8e08dc6/raw/3042d0ef75c028680ef438fb595dceb05b47b32e/appl.json").then(res => {
-console.log(res);
-  }
-  )
+  const chartRef = useRef(null)
+  const data = useSelector(state => state.data.appl)
 
   useEffect(() => {
+    console.log(111);
 
     //compute values
     const X = d3.map(data, x).map(d => new Date(d).getTime())
@@ -48,7 +47,6 @@ console.log(res);
     const I = d3.range(X.length)
     const defined = (d, i) => !isNaN(X[i]) && !isNaN(Y[i])
     const D = d3.map(data, defined)
-
 
     // Compute default domains.
     if (yDomain === undefined) yDomain = d3.extent(Y)
@@ -89,7 +87,8 @@ console.log(res);
         .attr("stroke", "currentColor")
         .attr("stroke-opacity", 0.1)) // добавляем еще один line в ю
 
-    svg.selectAll(".graph")
+    d3.select(chartRef.current)
+    .selectAll(".graph")
       .data([0])
       .join("path")
       .attr("class", "graph")
@@ -101,12 +100,13 @@ console.log(res);
       .attr("stroke-opacity", strokeOpacity)
       .attr("d", line(I));
 
-  }, [])
+  }, [data])
 
   return (
     <svg ref={svgRef}>
       <g ref={gAxisBottomRef}></g>
       <g ref={axisLeftRef}></g>
+      <g ref={chartRef}></g>
     </svg>
   )
 };
