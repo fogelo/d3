@@ -1,7 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit"
 
 const initState = {
-    appl: []
+    appl: [],
+    unemployments: []
 }
 
 const slice = createSlice({
@@ -9,7 +10,11 @@ const slice = createSlice({
     initialState: initState,
     reducers: {
         setAppl: (state, action) => {
-            state.appl = action.payload.appl
+            console.log(action.payload.appl);
+            state.appl = action.payload.appl.map(d => ({ ...d, close: d.close + Math.random() * 25 }))
+        },
+        setUnemployment: (state, action) => {
+            state.unemployments = action.payload.unemployments
         },
     },
 })
@@ -18,5 +23,5 @@ const slice = createSlice({
 export const dataReducer = slice.reducer
 
 // actions
-export const { setAppl } = slice.actions
+export const { setAppl, setUnemployment } = slice.actions
 

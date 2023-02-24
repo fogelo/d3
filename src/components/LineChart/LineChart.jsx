@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 
 
 const LineChart = ({
-  // data,
+  data,
   x = ([x]) => x, // given d in data, returns the (temporal) x-value
   y = ([, y]) => y, // given d in data, returns the (quantitative) y-value
   // defined, // for gaps in data
@@ -32,12 +32,11 @@ const LineChart = ({
   strokeOpacity = 1 // stroke opacity of line
 }
 ) => {
+
   const svgRef = useRef(null)
   const gAxisBottomRef = useRef(null)
   const axisLeftRef = useRef(null)
   const chartRef = useRef(null)
-  const appl = useSelector(state => state.data.appl)
-  const data = appl.map(d => ({...d, close: new Date(d.date).getUTCMonth() < 3 ? NaN : d.close})) //симулируем пропуски
 
   useEffect(() => {
     //compute values
