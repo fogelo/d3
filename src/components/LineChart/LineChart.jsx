@@ -86,7 +86,7 @@ const LineChart = ({
         .attr("stroke-opacity", 0.1)) // добавляем еще один line в ю
 
     d3.select(chartRef.current)
-    .selectAll(".graph")
+      .selectAll(".graph")
       .data([0])
       .join("path")
       .attr("class", "graph")
@@ -96,7 +96,9 @@ const LineChart = ({
       .attr("stroke-linecap", strokeLinecap)
       .attr("stroke-linejoin", strokeLinejoin)
       .attr("stroke-opacity", strokeOpacity)
-      .attr("d", line(I.filter(i=>D[i])));
+      .transition()
+      .duration(1000)
+      .attr("d", line(I.filter(i => D[i])))
 
   }, [data])
 
