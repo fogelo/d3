@@ -1,9 +1,7 @@
-import { useEffect } from "react"
 import "./App.css"
-import axios from "axios"
-import { setAppl } from "./store/dataReducer"
 import LineChartContainer from "./components/LineChart/LineChartContainer"
 import MultipleLineChartContainer from "./components/MultipleLineChart/MultipleLineChartContainer"
+import LineChartTooltipContainer from "./components/LineChartTooltip/LineChartTooltipContainer" 
 
 
 function App() {
@@ -12,6 +10,7 @@ function App() {
   return (
     <div>
       <LineChartContainer />
+      <LineChartTooltipContainer />
       <MultipleLineChartContainer />
     </div>
   );

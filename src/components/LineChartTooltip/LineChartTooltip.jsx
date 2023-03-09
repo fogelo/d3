@@ -3,7 +3,7 @@ import * as d3 from "d3"
 import dayjs from "dayjs"
 
 
-const LineChart = ({
+const LineChartTooltip = ({
   data,
   x = ([x]) => x, // given d in data, returns the (temporal) x-value
   y = ([, y]) => y, // given d in data, returns the (quantitative) y-value
@@ -35,12 +35,16 @@ const LineChart = ({
   const gAxisBottomRef = useRef(null)
   const axisLeftRef = useRef(null)
   const chartRef = useRef(null)
+  const tooltipRef = useRef(null)
 
   useEffect(() => {
     //compute values
     const X = d3.map(data, x).map(d => new Date(d).getTime())
     const Y = d3.map(data, y)
     const I = d3.range(X.length)
+    const O = d3.map(data, d => d)
+
+    // Compute which data points are considered defined.
     const defined = (d, i) => !isNaN(X[i]) && !isNaN(Y[i])
     const D = d3.map(data, defined)
 
@@ -66,6 +70,8 @@ const LineChart = ({
       .attr("height", height)
       .attr("viewBox", [0, 0, width, height])
       .attr("style", "max-width: 100%; height: auto; height: intrinsic; overflow: visible;")
+      .on("pointermove", pointermoved)
+      .on("pointerleave", pointerleft)
 
     d3.select(gAxisBottomRef.current)
       .attr("transform", `translate(0,${height - marginBottom})`)
@@ -98,6 +104,21 @@ const LineChart = ({
       .duration(1000)
       .attr("d", line(I.filter(i => D[i])))
 
+    const tooltip = d3.select(tooltipRef.current)
+
+
+    function pointermoved(event) {
+      const i = d3.bisectCenter(X, xScale.invert(d3.pointer(event)[0]))
+      tooltip.style("display", null)
+      tooltip.attr("transform", `translate(${xScale(X[i])},${yScale(Y[i])})`)
+      tooltip.selectAll("text")
+        .data([dayjs(X[i]).format("DD.MM.YYYY"), dayjs(X[i]).format("HH:mm:ss")])
+        .join("text")
+        .text((i) => i)
+      }
+    function pointerleft() {
+      tooltip.style("display", "none")
+    }
   }, [data])
 
   return (
@@ -105,8 +126,9 @@ const LineChart = ({
       <g ref={gAxisBottomRef}></g>
       <g ref={axisLeftRef}></g>
       <g ref={chartRef}></g>
+      <g ref={tooltipRef}></g>
     </svg>
   )
 };
 
-export default LineChart
+export default LineChartTooltip
